@@ -48,7 +48,6 @@ const UploadPage: React.FC = () => {
         setIsSubmitting(true);
 
         const formData = new FormData();
-
         formData.append("files", files.box1!);
         formData.append("files", files.box2!);
         formData.append("files", files.box3!);
@@ -57,21 +56,15 @@ const UploadPage: React.FC = () => {
             const res = await fetch("/upload", {
                 method: "POST",
                 body: formData,
-            })
+            });
 
             if (!res.ok) {
-                let errorDetails: any = {};
-                try {
-                    errorDetails = await res.json();
-                } catch {
-                    const text = await res.text();
-                    console.warn("С сервера пришел не JSON-ответ в виде посылки:", text);
-                }
-                console.error("Подробности об ошибке сервера:", errorDetails);
+                const errJson = await res.clone().json();
+                console.error("Подробности об ошибке сервера:", errJson);
                 alert(
-                    `Ошибка сервера ${res.status}:\n${JSON.stringify(errorDetails, null, 2)}`
+                    `Ошибка сервера ${res.status}:\n${JSON.stringify(errJson, null, 2)}`
                 );
-                throw new Error(`Сервер не отвечает: ${res.status}`);
+                return;
             }
 
             const data = await res.json();
@@ -79,7 +72,7 @@ const UploadPage: React.FC = () => {
             dispatch(setTaskId(taskId));
             navigate(`/survey?task_id=${taskId}`);
         } catch (err: any) {
-            console.error("Upload hatası:", err);
+            console.error("Ошибка загрузки:", err);
             alert(`При отправке фотографий произошла ошибка:\n${err.message}`);
         } finally {
             setIsSubmitting(false);

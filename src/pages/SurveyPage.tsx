@@ -118,7 +118,6 @@ const SurveyPage: React.FC = () => {
         setIsSubmitting(true);
         try {
             const payload = { task_id: taskId, survey: formData };
-
             const res = await fetch("/submit-survey", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -126,10 +125,10 @@ const SurveyPage: React.FC = () => {
             });
 
             if (!res.ok) {
-                const errData = await res.json();
-                console.error("Survey submit hata:", errData);
-                alert(`Sunucu hatası ${res.status}:\n${JSON.stringify(errData, null, 2)}`);
-                throw new Error(`Сервер не отвечает: ${res.status}`);
+                const err = await res.clone().json();
+                console.error("Ошибка опроса", err);
+                alert(`Ошибка сервера ${res.status}:\n${JSON.stringify(err, null, 2)}`);
+                return;
             }
 
             navigate(`/status?task_id=${taskId}`);
@@ -140,6 +139,7 @@ const SurveyPage: React.FC = () => {
             setIsSubmitting(false);
         }
     };
+
 
     //UI
     return (
