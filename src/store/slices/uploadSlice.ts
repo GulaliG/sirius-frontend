@@ -1,11 +1,13 @@
-import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+
+interface Preview {
+    url: string;
+    type: string;
+}
 
 interface UploadState {
     taskId: string | null;
-    previews: {
-        [key: string]: string;
-    };
+    previews: Record<string, Preview>;
 }
 
 const initialState: UploadState = {
@@ -20,8 +22,12 @@ const uploadSlice = createSlice({
         setTaskId(state, action: PayloadAction<string>) {
             state.taskId = action.payload;
         },
-        setPreview(state, action: PayloadAction<{ key: string; url: string }>) {
-            state.previews[action.payload.key] = action.payload.url;
+        setPreview(
+            state,
+            action: PayloadAction<{ key: string; url: string; type: string }>
+        ) {
+            const { key, url, type } = action.payload;
+            state.previews[key] = { url, type };
         },
     },
 });

@@ -15,14 +15,13 @@ import storage from "redux-persist/lib/storage";
 //rootReducer combine
 const rootReducer = combineReducers({
     upload: uploadReducer,
-    // başkaları varsa buraya ekleyin
 });
 
 //persist config
 const persistConfig = {
     key: "root",
     storage,
-    whitelist: ["upload"], // yalnızca upload slice’ini sakla
+    whitelist: ["upload"],
 };
 
 //persistReducer

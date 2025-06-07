@@ -18,6 +18,8 @@ const SurveySection: React.FC<SurveySectionProps> = ({
     answers,
     onAnswerChange,
 }) => {
+
+    //UI
     return (
         <div className="mb-8">
             <h1 className="text-2xl font-semibold text-gray-800 mb-6">{title}</h1>
@@ -47,6 +49,7 @@ const SurveySection: React.FC<SurveySectionProps> = ({
                                                 checked={isChecked}
                                                 onChange={() => onAnswerChange(q.id, label)}
                                                 className="peer sr-only"
+                                                aria-label={`${q.label}: ${label}`}
                                             />
 
                                             <span
@@ -106,6 +109,7 @@ const SurveySection: React.FC<SurveySectionProps> = ({
                                                 checked={isChecked}
                                                 onChange={() => onAnswerChange(q.id, label)}
                                                 className="peer sr-only"
+                                                aria-label={`${q.label}: ${label}`}
                                             />
                                             <span
                                                 className={`
@@ -152,6 +156,8 @@ const SurveySection: React.FC<SurveySectionProps> = ({
                                             hover:border-[#8A6BF4]
                                             focus:border-[#8A6BF4] focus:outline-none"
                                 placeholder="Введите текст..."
+                                aria-label={q.label}
+                                aria-required="true"
                             />
                         )}
                     </div>

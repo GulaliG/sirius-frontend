@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import DatePicker, { registerLocale } from "react-datepicker";
 import { ru } from "date-fns/locale";
+import { toast } from "react-toastify";
 import type { ReactDatePickerCustomHeaderProps } from "react-datepicker";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import "react-datepicker/dist/react-datepicker.css";
@@ -8,9 +9,12 @@ import "react-datepicker/dist/react-datepicker.css";
 registerLocale("ru", ru);
 
 interface DateInputProps {
+    id?: string;
     label: string;
     selectedDate: Date | null;
     onChange: (date: Date | null) => void;
+    ariaRequired?: boolean;
+    ariaInvalid?: boolean;
 }
 
 const MonthYearHeader: React.FC<ReactDatePickerCustomHeaderProps> = ({
@@ -114,24 +118,41 @@ const MonthYearHeader: React.FC<ReactDatePickerCustomHeaderProps> = ({
 };
 
 const DateInput: React.FC<DateInputProps> = ({
+    id,
     label,
     selectedDate,
     onChange,
-}) => (
-    <div className="flex flex-col mb-6">
-        <label className="block text-[#293244] text-[16px] mb-1">{label}</label>
-        <DatePicker
-            selected={selectedDate}
-            onChange={(d) => onChange(d)}
-            locale="ru"
-            dateFormat="dd.MM.yyyy"
-            placeholderText="02.03.2000"
-            showMonthDropdown
-            showYearDropdown
-            dropdownMode="select"
-            popperPlacement="bottom-start"
-            showPopperArrow={false}
-            className="
+    ariaRequired,
+    ariaInvalid
+}) => {
+    const handleDateChange = (date: Date | null) => {
+        if (date && date > new Date()) {
+            toast.error("Нельзя выбрать дату из будущего. Пожалуйста, укажите корректную дату рождения.");
+            return onChange(null);
+        }
+        onChange(date);
+    };
+
+    //UI
+    return (
+        <div className="flex flex-col mb-6">
+            <label htmlFor={id} className="block text-[#293244] text-[16px] mb-1">{label}</label>
+            <DatePicker
+                id={id}
+                selected={selectedDate}
+                onChange={handleDateChange}
+                maxDate={new Date()}
+                aria-required={ariaRequired}
+                aria-invalid={ariaInvalid}
+                locale="ru"
+                dateFormat="dd.MM.yyyy"
+                placeholderText="02.03.2000"
+                showMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
+                popperPlacement="bottom-start"
+                showPopperArrow={false}
+                className="
                         w-[95px] border border-[#69758E] rounded-[6px]
                         px-3 py-2 focus:outline-none text-gray-700 text-sm
                         placeholder-gray-400 caret-transparent
@@ -139,22 +160,22 @@ const DateInput: React.FC<DateInputProps> = ({
                         hover:border-[#8A6BF4]
                         focus:border-[#8A6BF4] focus:outline-none
                         "
-            calendarClassName="
+                calendarClassName="
                                 drop-shadow-lg bg-white rounded-xl mt-1
                                 "
-            renderCustomHeader={(props) => <MonthYearHeader {...props} />}
-            dayClassName={(date) => {
-                const sel = selectedDate;
-                return sel &&
-                    date.getDate() === sel.getDate() &&
-                    date.getMonth() === sel.getMonth() &&
-                    date.getFullYear() === sel.getFullYear()
-                    ? "bg-[#7abef8] text-white rounded-full"
-                    : "";
-            }}
-            renderDayContents={(day) => <span>{day}</span>}
-        />
-    </div>
-);
-
+                renderCustomHeader={(props) => <MonthYearHeader {...props} />}
+                dayClassName={(date) => {
+                    const sel = selectedDate;
+                    return sel &&
+                        date.getDate() === sel.getDate() &&
+                        date.getMonth() === sel.getMonth() &&
+                        date.getFullYear() === sel.getFullYear()
+                        ? "bg-[#7abef8] text-white rounded-full"
+                        : "";
+                }}
+                renderDayContents={(day) => <span>{day}</span>}
+            />
+        </div>
+    );
+};
 export default DateInput;

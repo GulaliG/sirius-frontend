@@ -7,6 +7,7 @@ interface UploadBoxProps {
     label: string;
     boxKey: string;
     previewUrl?: string;
+    previewType?: string;
     onFileSelect: (boxKey: string, file: File, previewUrl: string) => void;
 }
 
@@ -14,6 +15,7 @@ const UploadBox: React.FC<UploadBoxProps> = ({
     label,
     boxKey,
     previewUrl,
+    previewType,
     onFileSelect,
 }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -25,15 +27,12 @@ const UploadBox: React.FC<UploadBoxProps> = ({
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onload = () => {
-                const url = reader.result as string;
-                onFileSelect(boxKey, file, url);
-            };
-            reader.readAsDataURL(file);
+            const url = URL.createObjectURL(file);
+            onFileSelect(boxKey, file, url);
         }
     };
 
+    //UI
     return (
         <div className="flex flex-col items-center">
             <div
@@ -56,11 +55,19 @@ const UploadBox: React.FC<UploadBoxProps> = ({
                     </div>
                 ) : (
                     <div className="relative w-full h-full">
-                        <img
-                            src={previewUrl}
-                            alt={label}
-                            className="w-full h-full object-cover"
-                        />
+                        {previewType === "application/pdf" ? (
+                            <embed
+                                src={previewUrl!}
+                                type="application/pdf"
+                                className="w-full h-full border-none"
+                            />
+                        ) : (
+                            <img
+                                src={previewUrl}
+                                alt={label}
+                                className="w-full h-full object-cover"
+                            />
+                        )}
                         <div
                             className="
                                         absolute
@@ -77,10 +84,10 @@ const UploadBox: React.FC<UploadBoxProps> = ({
                 )}
 
                 <input
-                    aria-label="upload"
+                    aria-label={`Загрузить рисунок: ${label}`}
                     title="upload"
                     type="file"
-                    accept="image/png, image/jpeg, application/pdf"
+                    accept="image/png, image/jpeg, application/pdf, image/jpg"
                     className="hidden"
                     ref={fileInputRef}
                     onChange={handleChange}

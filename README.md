@@ -1,54 +1,170 @@
-# React + TypeScript + Vite
+# Sirius AI-психодиагностика (Frontend)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Деплоймент:** [https://sirius-frontend-beige.vercel.app/](https://sirius-frontend-beige.vercel.app/)
 
-Currently, two official plugins are available:
+Полнофункциональный прототип SPA на React для AI-психодиагностики детей: от загрузки рисунков до получения детализированного PDF-отчёта.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## Описание проекта
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Цель: предоставить родителям удобный интерфейс для загрузки трёх рисунков ребёнка, прохождения психодиагностического опроса и получения интерпретации результатов в формате PDF.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+Ключевые возможности:
+
+* Интуитивная загрузка и превью изображений
+* Адаптивный многосекционный опросник
+* Надёжная асинхронная обработка через backend API
+* Визуальная обратная связь во время ожидания результатов
+* Современные анимации и responsive дизайн
+
+---
+
+## Функциональные модули
+
+1. **Приветственный экран** (`HomePage`)
+   — Название теста, краткое введение, кнопка «Начать тест».
+
+2. **Загрузка изображений** (`UploadPage` + `UploadBox`)
+   — Три поля загрузки с подписями: «Дом/Дерево/Человек», «Несуществующее животное», «Автопортрет».
+   — Предварительный просмотр, проверка формата (jpg, png, pdf) и размера (≤5 МБ), возможность перезагрузки.
+   — Активация кнопки «Далее» только после заполнения всех трёх загрузочных полей.
+   — Отправка файлов на `/upload` с помощью `FormData`, получение `task_id`.
+
+3. **Анкетирование** (`SurveyPage` + `SurveySection`)
+   — Автоматическая загрузка структуры опросника из `questions.json`.
+   — Поддержка типов вопросов: шкала частоты, рейтинг 1–5, текстовые поля, emoji-выбор, datepicker (`DateInput`).
+   — Валидация обязательных полей: без пропусков нельзя перейти дальше.
+   — Отправка ответов на `/submit-survey` вместе с `task_id` в формате JSON.
+
+4. **Проверка статуса отчёта** (`StatusPage`)
+   — Polling API `/report/{task_id}` каждые 10 сек. до готовности или тайм-аута (5 минут).
+   — Обработка ответов: 404 → повтор, 500 → ошибка.
+   — Показ экранов: «Анализ в процессе…», «Отчёт готов», «Ошибка сервера» или «Тайм-аут».
+
+5. **Экран результата** (`ReportResult`)
+   — Отображение Markdown-отчёта (ReactMarkdown), кнопки для скачивания и шаринга PDF.
+
+6. **Навигация и анимации**
+   — Framer Motion (PageTransition), Preloader при загрузке приложения.
+
+---
+
+## Технический стек и инструментариум
+
+* **React 18+** & Hooks
+* **TypeScript**
+* **Redux Toolkit** + **Redux Persist**
+* **React Router v6**
+* **Framer Motion**
+* **Tailwind CSS**
+* **React Datepicker** (локализация ru)
+* **Vite** (HMR, fast build)
+
+Дополнительно: ESLint/Prettier конфигурации, setupProxy для локальной разработки.
+
+---
+
+## Структура проекта
+
+```bash
+public/                           # статичные файлы: изображения, видео, шрифты
+├─ assets/                        # иконки и изображения компонентов
+├─ bg/                            # фоновые видео (bg_video.webm)
+└─ fonts/                         # пользовательские шрифты CirceRounded
+
+src/
+├─ components/                   # атомарные UI-блоки
+│  ├─ UploadBox.tsx              # загрузка и превью файла
+│  ├─ SurveySection.tsx          # отрисовка блока вопросов
+│  ├─ DateInput.tsx              # кастомный ReactDatepicker
+│  ├─ PageTransition.tsx         # обёртка для анимаций переходов
+│  ├─ Preloader.tsx              # экран загрузки при старте
+│  └─ ReportResult.tsx           # вывод Markdown + PDF-кнопки
+
+├─ pages/                        # страницы (роуты)
+│  ├─ HomePage.tsx               # стартовый экран
+│  ├─ UploadPage.tsx             # экран загрузки изображений
+│  ├─ SurveyPage.tsx             # экран опросника
+│  └─ StatusPage.tsx             # экран статуса и результата
+
+├─ store/                        # управление состоянием
+│  ├─ index.ts                   # конфигурация store + Redux Persist
+│  ├─ hooks.ts                   # useAppDispatch/useAppSelector
+│  └─ slices/                    # слайсы
+│     └─ uploadSlice.ts          # task_id + previews state
+
+├─ types/                        # TS-типизация (AnswerTypes, Section)
+├─ questions.json               # структура опросника
+├─ App.tsx                       # маршрутизация и global wrappers
+├─ main.tsx                      # точка входа ReactDOM
+├─ env.d.ts                      # объявление глобальных переменных
+└─ index.css                     # глобальные стили и Tailwind imports
+
+vite.config.ts                  # настройки Vite, proxy (upload, submit-survey, report)
+README.md                       # эта документация
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Установка и локальная разработка
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+1. **Клонирование репозитория**
+
+   ```bash
+   git clone https://github.com/GulaliG/sirius-frontend
+   cd sirius-frontend
+   ```
+2. **Установка зависимостей**
+
+   ```bash
+   npm install
+   # или
+   yarn install
+   ```
+3. **Конфигурация окружения**
+   Создайте `.env.development` (и при необходимости `.env.production`):
+
+   ```env
+   VITE_API_URL=https://sirius-backend-4wsr.onrender.com
+   ```
+4. **Запуск dev-сервера**
+
+   ```bash
+   npm run dev
+   ```
+5. **Сборка и просмотр production-bundle**
+
+   ```bash
+   npm run build
+   npm run serve
+   ```
+
+---
+
+## Переменные окружения
+
+| Переменная     | Описание                                                           |
+| -------------- | ------------------------------------------------------------------ |
+| `VITE_API_URL` | Базовый URL backend API для `/upload`, `/submit-survey`, `/report` |
+
+---
+
+## Обработка ошибок и уведомления
+
+* **Клиентская валидация**: проверка формата и размера изображений до отправки.
+* **React Toastify** (или аналог) для toast-уведомлений о статусе/ошибках.
+* **Inline fallback**: если toast не доступен, показываем баннер под формой.
+* **Network error handling**: дружелюбные сообщения при 404/500 и тайм-аутах.
+
+---
+
+## Доступность (A11Y)
+
+* Все интерактивные элементы имеют `aria-label` и поддерживают keyboard-nav.
+* Контраст текста и кнопок соответствует WCAG AA.
+* Семантические теги (`<main>`, `<section>`, `<button>`) используются для улучшения доступности.
+
+---
+
+Made by **GulaliG**, © 2025

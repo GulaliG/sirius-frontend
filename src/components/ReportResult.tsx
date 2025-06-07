@@ -1,6 +1,7 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
+import { toast } from 'react-toastify';
 
 interface ReportResultProps {
     reportMd?: string;
@@ -25,11 +26,12 @@ export const ReportResult: React.FC<ReportResultProps> = ({
         } else {
             navigator.clipboard
                 .writeText(window.location.href)
-                .then(() => alert("Ссылка скопирована в буфер обмена"))
+                .then(() => toast.success("Ссылка скопирована в буфер обмена"))
                 .catch(console.error);
         }
     };
 
+    //UI
     return (
         <div className="flex flex-col">
             <div className="prose prose-sm sm:prose lg:prose-lg max-w-none text-gray-700 mb-6 overflow-hidden rounded-lg [&>*]:mt-1 [&>*]:mb-2 leading-[1]">
@@ -50,6 +52,7 @@ export const ReportResult: React.FC<ReportResultProps> = ({
                     <a
                         href={pdfUrl}
                         download
+                        aria-label="Скачать отчет PDF"
                         className="w-full sm:w-auto px-6 py-3 bg-[#45A5F6] hover:bg-[#007EE5]
                 text-white rounded-[100px] flex items-center justify-center sm:justify-start space-x-2"
                     >
@@ -57,8 +60,10 @@ export const ReportResult: React.FC<ReportResultProps> = ({
                         <ArrowDownTrayIcon className="h-[24px] w-[24px]" />
                     </a>
 
-                    <button type="button"
+                    <button
+                        type="button"
                         onClick={handleShare}
+                        aria-label="Поделиться результатами"
                         className="w-full sm:w-auto px-6 py-3 bg-[#45A5F6] hover:bg-[#5bb5f0]
                                 text-white rounded-[100px] flex items-center justify-center sm:justify-start space-x-2
                                 "
