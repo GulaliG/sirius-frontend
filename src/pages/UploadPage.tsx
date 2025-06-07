@@ -58,8 +58,15 @@ const UploadPage: React.FC = () => {
                 body: formData,
             });
 
+            const text = await res.text();
+
             if (!res.ok) {
-                const errJson = await res.clone().json();
+
+                let errJson: any = text;
+                try {
+                    errJson = JSON.parse(text);
+                } catch {
+                }
                 console.error("Подробности об ошибке сервера:", errJson);
                 alert(
                     `Ошибка сервера ${res.status}:\n${JSON.stringify(errJson, null, 2)}`
@@ -67,10 +74,15 @@ const UploadPage: React.FC = () => {
                 return;
             }
 
-            const data = await res.json();
-            const taskId = data.task_id as string;
-            dispatch(setTaskId(taskId));
-            navigate(`/survey?task_id=${taskId}`);
+            let data: { task_id: string };
+            try {
+                data = JSON.parse(text);
+            } catch {
+                throw new Error("Невалидный JSON в ответе сервера");
+            }
+
+            dispatch(setTaskId(data.task_id));
+            navigate(`/survey?task_id=${data.task_id}`);
         } catch (err: any) {
             console.error("Ошибка загрузки:", err);
             alert(`При отправке фотографий произошла ошибка:\n${err.message}`);
