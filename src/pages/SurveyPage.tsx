@@ -6,6 +6,8 @@ import SurveySection from "../components/SurveySection";
 import DateInput from "../components/DateInput";
 import { HiChevronLeft, HiChevronDoubleRight } from "react-icons/hi";
 
+const API = __API_BASE__ as string
+
 //constant
 const SurveyPage: React.FC = () => {
     //param
@@ -118,7 +120,7 @@ const SurveyPage: React.FC = () => {
         setIsSubmitting(true);
         try {
             const payload = { task_id: taskId, survey: formData };
-            const res = await fetch("/submit-survey", {
+            const res = await fetch(`${API}/submit-survey`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),

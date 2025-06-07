@@ -3,6 +3,8 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { ReportResult } from "../components/ReportResult";
 import { HiHome } from "react-icons/hi";
 
+const API = __API_BASE__ as string
+
 export default function StatusPage() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -27,7 +29,7 @@ export default function StatusPage() {
 
         const checkStatus = async () => {
             try {
-                const res = await fetch(`/report/${taskId}`);
+                const res = await fetch(`${API}/report/${taskId}`);
                 if (res.status === 404) {
                     if (++triesRef.current < MAX_POLLS) {
                         pollTimer.current = setTimeout(checkStatus, POLL_INTERVAL_MS);

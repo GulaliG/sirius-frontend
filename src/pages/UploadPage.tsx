@@ -6,6 +6,8 @@ import UploadBox from "../components/UploadBox";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setPreview, setTaskId } from "../store/slices/uploadSlice";
 
+const API = __API_BASE__ as string
+
 const UploadPage: React.FC = () => {
     //navigate
     const navigate = useNavigate();
@@ -53,7 +55,7 @@ const UploadPage: React.FC = () => {
         formData.append("files", files.box3!);
 
         try {
-            const res = await fetch("/upload", {
+            const res = await fetch(`${API}/upload`, {
                 method: "POST",
                 body: formData,
             });
