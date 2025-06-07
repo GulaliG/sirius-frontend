@@ -1,0 +1,105 @@
+@import "tailwindcss";
+@import "react-datepicker/dist/react-datepicker.css";
+
+/*Main*/
+:root {
+  font-family: "CirceRounded", system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+span {
+  font-family: "CirceRounded", system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+/*Date Picker*/
+.react-datepicker {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.react-datepicker__header {
+  border-bottom: none !important;
+  background-color: transparent !important;
+}
+
+.react-datepicker__month-container {
+  width: 280px !important;
+  height: 280px !important;
+  border: none !important;
+}
+
+.react-datepicker__day-name {
+  color: #A0A9B8;
+}
+
+.react-datepicker__header select {
+  border: 1px solid #8A6BF4 !important;
+  border-radius: 6px !important;
+}
+
+.react-datepicker__header select:hover,
+.react-datepicker__header select:focus {
+  outline: none !important;
+}
+
+.react-datepicker__day--keyboard-selected,
+.react-datepicker__day--keyboard-selected:hover,
+.react-datepicker__day--selected {
+  background-color: #8A6BF4!important;
+  color: white   !important;
+  border-radius: 25% !important;
+}
+
+.react-datepicker__input-container input {
+  caret-color: transparent !important;
+}
+
+.react-datepicker__day--outside-month {
+  color: #D1D5DB !important;
+}
+
+.react-datepicker__day-names {
+  background-color: #fff !important;
+}
+
+/*Fonts*/
+@font-face {
+  font-family: "CirceRounded";
+  font-style: normal;
+  font-weight: 100;
+  src: url("/fonts/CirceRounded-Thin.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "CirceRounded";
+  font-style: normal;
+  font-weight: 200;
+  src: url("/fonts/CirceRounded-ExtraLight.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "CirceRounded";
+  font-style: normal;
+  font-weight: 300;
+  src: url("/fonts/CirceRounded-Light.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "CirceRounded";
+  font-style: normal;
+  font-weight: 400;
+  src: url("/fonts/CirceRounded-Regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "CirceRounded";
+  font-style: normal;
+  font-weight: 700;
+  src: url("/fonts/CirceRounded-Bold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "CirceRounded";
+  font-style: normal;
+  font-weight: 800;
+  src: url("/fonts/CirceRounded-ExtraBold.otf") format("opentype");
+}
